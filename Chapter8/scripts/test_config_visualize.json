@@ -1,0 +1,88 @@
+{
+    "model": {
+        "type": "graph_convolutional",
+        "in_features": 45,
+        "out_features": 1,
+        "hidden_features": 144,
+        "molecule_features": 0,
+        "edge_features": 12,
+        "layer_type": "torch_geometric.nn.GraphConv",
+        "layers_count": 6,
+        "norm_layer": "kmol.model.layers.BatchNorm",
+        "dropout": 0.2,
+        "is_residual": 1
+    },
+    "loader": {
+        "type": "csv",
+        "input_path": "data/Mpro_test.csv",
+        "input_column_names": ["SMILES"],
+        "target_column_names": ["class"]
+    },
+    "splitter": {
+        "type": "index",
+        "splits": {
+            "train": 0.0,
+            "test": 1.0
+        }
+    },
+    "featurizers": [
+        {
+            "type": "graph",
+            "inputs": ["SMILES"],
+            "outputs": ["graph"],
+            "descriptor_calculator": {"type": "rdkit"}
+        }
+    ],
+    "transformers": [],
+    "criterion": {"type": "torch.nn.BCEWithLogitsLoss"},
+    "optimizer": {
+        "type": "torch.optim.AdamW",
+        "lr": 0.0001,
+        "weight_decay": 1e-05
+    },
+    "scheduler": {
+        "type": "torch.optim.lr_scheduler.OneCycleLR",
+        "max_lr": 0.0001,
+        "epochs": 200,
+        "pct_start": 0.3,
+        "div_factor": 25,
+        "final_div_factor": 1000
+    },
+    "output_path": "result_best/",
+    "checkpoint_path": "result_best/checkpoint.best.pt",
+    "train_split": "train",
+    "train_metrics": [],
+    "threshold": 0.5,
+    "validation_split": "validation",
+    "test_split": "test",
+    "target_metric": "cohen_kappa",
+    "test_metrics": [
+        "roc_auc",
+        "pr_auc",
+        "accuracy",
+        "precision",
+        "recall",
+        "cohen_kappa",
+        "f1"
+    ],
+    "epochs": 200,
+    "batch_size": 128,
+    "use_cuda": true,
+    "enabled_gpus": [0],
+    "seed": 42,
+    "cache_location": "cache/",
+    "clear_cache": false,
+    "log_format": "",
+    "log_level": "info",
+    "visualizer": {
+        "type": "iig",
+        "is_binary_classification": true,
+        "is_multitask": false,
+        "mapping_file_path": "result_best/mapping.csv",
+        "targets": [0],
+        "sketcher": {
+            "type": "rdkit",
+            "output_path": "result_best/"
+        }
+    }
+}
